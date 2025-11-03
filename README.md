@@ -26,7 +26,7 @@ A full-featured e-commerce REST API built with Node.js, Express, and MongoDB.
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/Aminekaddouri/ecommerce-api.git
+git clone https://github.com/Aminekaddouri/ecommerce-rest-api.git
 cd ecommerce-api
 ```
 
