@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const asyncHandler = require('express-async-handler');
 const User = require('../models/User');
 
-const protect = asyncHandler(async (req, res, next) =>  {
+const protect = asyncHandler(async (req, res, next) => {
   let token;
 
   if (
@@ -16,15 +16,18 @@ const protect = asyncHandler(async (req, res, next) =>  {
 
       req.user = await User.findById(decoded.id).select('-password');
 
+      if (!req.user) {
+        res.status(401);
+        throw new Error('User no longer exists');
+      }
+
       next();
     } catch (error) {
-      console.error(error);
+      console.error('Token verification error:', error.message);
       res.status(401);
       throw new Error('Not authorized, token failed');
     }
-  }
-
-  if (!token) {
+  } else {
     res.status(401);
     throw new Error('Not authorized, no token');
   }

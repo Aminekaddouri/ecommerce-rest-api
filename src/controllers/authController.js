@@ -21,11 +21,11 @@ const registerUser = asyncHandler(async (req, res) => {
   const user = await User.create({
     name,
     email,
-    password
+    password,
   });
 
   if (user) {
-    res.status(200).json({
+    res.status(201).json({
       success: true,
       data: {
         _id: user._id,
@@ -33,8 +33,8 @@ const registerUser = asyncHandler(async (req, res) => {
         email: user.email,
         role: user.role,
         avatar: user.avatar,
-        token: generateToken(user._id)
-      }
+        token: generateToken(user._id),
+      },
     });
   } else {
     res.status(400);
@@ -50,7 +50,7 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new Error('Please provide email and password');
   }
 
-  const user = await User.findOne({email}).select('+password');
+  const user = await User.findOne({ email }).select('+password');
 
   if (user && (await user.matchPassword(password))) {
     res.json({
@@ -61,12 +61,12 @@ const loginUser = asyncHandler(async (req, res) => {
         email: user.email,
         role: user.role,
         avatar: user.avatar,
-        token: generateToken(user._id)
-      }
+        token: generateToken(user._id),
+      },
     });
   } else {
     res.status(401);
-    throw new Error('Invalid email or password')
+    throw new Error('Invalid email or password');
   }
 });
 
@@ -83,8 +83,8 @@ const getUserProfile = asyncHandler(async (req, res) => {
         role: user.role,
         avatar: user.avatar,
         isActive: user.isActive,
-        createdAt: user.createdAt
-      }
+        createdAt: user.createdAt,
+      },
     });
   } else {
     res.status(404);
@@ -92,7 +92,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
   }
 });
 
-const updateUserProfile= asyncHandler(async (req, res) => {
+const updateUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
 
   if (user) {
@@ -113,8 +113,8 @@ const updateUserProfile= asyncHandler(async (req, res) => {
         email: updatedUser.email,
         role: updatedUser.role,
         avatar: updatedUser.avatar,
-        token: generateToken(updatedUser._id)
-      }
+        token: generateToken(updatedUser._id),
+      },
     });
   } else {
     res.status(404);
@@ -126,5 +126,5 @@ module.exports = {
   registerUser,
   loginUser,
   getUserProfile,
-  updateUserProfile
+  updateUserProfile,
 };
