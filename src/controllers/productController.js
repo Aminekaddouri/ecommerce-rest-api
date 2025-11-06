@@ -1,8 +1,16 @@
 const asyncHandler = require('express-async-handler');
 const Product = require('../models/Product');
+const cloudinary = require('../config/cloudinary');
 
 const createProduct = asyncHandler(async (req, res) => {
   req.body.user = req.user._id;
+
+  if (req.files && req.files.length > 0) {
+    req.body.images = req.files.map(file => ({
+      url: file.path,
+      public_id: file.filename,
+    }));
+  }
 
   const product = await Product.create(req.body);
 
@@ -53,9 +61,22 @@ const updateProduct = asyncHandler(async (req, res) => {
     throw new Error('User not authorized to update this product');
   }
 
+  if (req.files && req.files.length > 0) {
+    if (product.images && product.images.length > 0) {
+      for (const image of product.images) {
+        await cloudinary.uploader.destroy(image.public_id);
+      }
+    }
+
+    req.body.images = req.files.map(file => ({
+      url: file.path,
+      public_id: file.filename,
+    }));
+  }
+
   product = await Product.findByIdAndUpdate(req.params.id, req.body, {
-    new: true, // Return updated document
-    runValidators: true, // Run model validators on update
+    new: true,
+    runValidators: true,
   });
 
   res.json({
@@ -76,6 +97,12 @@ const deleteProduct = asyncHandler(async (req, res) => {
   if (product.user.toString() !== req.user._id.toString()) {
     res.status(401);
     throw new Error('User not authorized to delete this product');
+  }
+
+  if (product.images && product.images.length > 0) {
+    for (const image of product.images) {
+      await cloudinary.uploader.destroy(image.public_id);
+    }
   }
 
   await product.deleteOne();
