@@ -7,12 +7,14 @@ const {
 } = require('../controllers/uploadController');
 const { protect, admin } = require('../middleware/authMiddleware');
 const upload = require('../middleware/uploadMiddleware');
+const multerErrorHandler = require('../middleware/multerErrorHandler');
 
 router.post(
   '/single',
   protect,
   admin,
   upload.single('image'),
+  multerErrorHandler,
   uploadSingleImage
 );
 
@@ -21,6 +23,7 @@ router.post(
   protect,
   admin,
   upload.array('images', 5),
+  multerErrorHandler,
   uploadMultipleImages
 );
 
