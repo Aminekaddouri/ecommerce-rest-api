@@ -25,11 +25,22 @@ const getAllProducts = asyncHandler(async (req, res) => {
   const limit = Number(req.query.limit) || 10;
   const skip = (page - 1) * limit;
 
-  // Get total count for pagination info
-  const products = await Product.find({}).limit(limit).skip(skip);
+  // Build query object
+  const query = {};
+
+  // Search by keyword (name or description)
+  if (req.query.keyword) {
+    query.$or = [
+      { name: { $regex: req.query.keyword, $options: 'i' } },
+      { description: { $regex: req.query.keyword, $options: 'i' } },
+    ];
+  }
+
+  // Get products with filters and pagination
+  const products = await Product.find(query).limit(limit).skip(skip);
 
   // Get total count for pagination info
-  const totalProducts = await Product.countDocuments({});
+  const totalProducts = await Product.countDocuments(query);
   const totalPages = Math.ceil(totalProducts / limit);
 
   res.json({
