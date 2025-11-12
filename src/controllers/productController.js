@@ -53,8 +53,17 @@ const getAllProducts = asyncHandler(async (req, res) => {
     }
   }
 
+  // Sorting
+  let sort = {};
+  if (req.query.sort) {
+    const sortFields = req.query.sort.split(',').join(' ');
+    sort = sortFields;
+  } else {
+    sort = '-createdAt'; // Default: newest first
+  }
+
   // Get products with filters and pagination
-  const products = await Product.find(query).limit(limit).skip(skip);
+  const products = await Product.find(query).sort(sort).limit(limit).skip(skip);
 
   // Get total count for pagination info
   const totalProducts = await Product.countDocuments(query);
