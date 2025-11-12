@@ -42,6 +42,17 @@ const getAllProducts = asyncHandler(async (req, res) => {
     query.category = req.query.category;
   }
 
+  // Filter by price range
+  if (req.query.minPrice || req.query.maxPrice) {
+    query.price = {};
+    if (req.query.minPrice) {
+      query.price.$gte = Number(req.query.minPrice); // Greater than or equal
+    }
+    if (req.query.maxPrice) {
+      query.price.$lte = Number(req.query.maxPrice); // Less than or equal
+    }
+  }
+
   // Get products with filters and pagination
   const products = await Product.find(query).limit(limit).skip(skip);
 
