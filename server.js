@@ -18,6 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', require('./src/routes/authRoutes'));
 app.use('/api/products', require('./src/routes/productRoutes'));
 app.use('/api/upload', require('./src/routes/uploadRoutes'));
+app.use('/api/reviews', require('./src/routes/reviewRoutes'));
 
 app.get('/', (req, res) => {
   res.json({
