@@ -77,7 +77,23 @@ const productSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );
+
+// virtual field 'reviews' that isn't stored in DB but populated from Review model
+productSchema.virtual('reviews', {
+  ref: 'Review', // Reference to Review model
+  localField: '_id', // Product's _id field
+  foreignField: 'product', // Review's product field
+  justOne: false, // Return array of reviews (not just one)
+});
+
+// When a product is deleted, delete all its reviews
+productSchema.pre('deleteOne', { document: true }, async function (next) {
+  await this.model('Review').deleteMany({ product: this._id });
+  next();
+});
 
 module.exports = mongoose.model('Product', productSchema);
