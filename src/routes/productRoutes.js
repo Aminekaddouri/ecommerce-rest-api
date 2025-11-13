@@ -7,6 +7,10 @@ const {
   updateProduct,
   deleteProduct,
 } = require('../controllers/productController');
+const {
+  createReview,
+  getProductReviews,
+} = require('../controllers/reviewController');
 const { protect, admin } = require('../middleware/authMiddleware');
 const upload = require('../middleware/uploadMiddleware');
 const multerErrorHandler = require('../middleware/multerErrorHandler');
@@ -34,4 +38,9 @@ router
   )
   .delete(protect, admin, deleteProduct);
 
+// Nested Review Routes
+router
+  .route('/:productId/reviews')
+  .post(protect, createReview)
+  .get(getProductReviews);
 module.exports = router;
