@@ -27,3 +27,5 @@ coverage/
 # Build
 dist/
 build/
+
+API_EXAMPLES.md
