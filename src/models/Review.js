@@ -6,7 +6,7 @@ const reviewSchema = new mongoose.Schema(
       type: Number,
       required: [true, 'Please add a rating'],
       min: [1, 'Rating must be at least 1'],
-      max: [1, 'Rating cannot be more than 5'],
+      max: [5, 'Rating cannot be more than 5'],
     },
     comment: {
       type: String,
