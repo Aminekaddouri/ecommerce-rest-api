@@ -80,10 +80,17 @@ const getAllProducts = asyncHandler(async (req, res) => {
 });
 
 const getProductById = asyncHandler(async (req, res) => {
-  const product = await Product.findById(req.params.id).populate(
-    'user',
-    'name email'
-  );
+  const product = await Product.findById(req.params.id)
+    .populate('user', 'name email')
+    .populate({
+      path: 'reviews',
+      select: 'rating comment createdAt',
+      populate: {
+        path: 'user',
+        select: 'name avatar',
+      },
+      options: { sort: '-createdAt' }, // Newest reviews first
+    });
 
   if (!product) {
     res.status(404);
