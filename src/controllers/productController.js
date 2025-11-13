@@ -63,7 +63,11 @@ const getAllProducts = asyncHandler(async (req, res) => {
   }
 
   // Get products with filters and pagination
-  const products = await Product.find(query).sort(sort).limit(limit).skip(skip);
+  const products = await Product.find(query)
+    .sort(sort)
+    .limit(limit)
+    .skip(skip)
+    .select('--v');
 
   // Get total count for pagination info
   const totalProducts = await Product.countDocuments(query);
