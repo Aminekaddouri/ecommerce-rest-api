@@ -55,7 +55,7 @@ cartSchema.methods.calculateTotals = function () {
     (total, item) => total + item.quantity,
     0
   );
-  this.subtotal = this.item.reduce(
+  this.subtotal = this.items.reduce(
     (total, item) => total + item.price * item.quantity,
     0
   );

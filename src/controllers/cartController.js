@@ -152,7 +152,7 @@ const updateCartItem = asyncHandler(async (req, res) => {
 });
 
 const removeFromCart = asyncHandler(async (req, res) => {
-  const itemId = req.params;
+  const { itemId } = req.params;
 
   const cart = await Cart.findOne({ user: req.user._id });
 
@@ -170,6 +170,9 @@ const removeFromCart = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error('Item not found in cart');
   }
+
+  // Remove item
+  cart.items.splice(itemIndex, 1);
 
   // Save cart
   await cart.save();
