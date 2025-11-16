@@ -275,6 +275,22 @@ const cancelOrder = asyncHandler(async (req, res) => {
 
   const cancelledOrder = await order.save();
 
+  // Populate user info for email
+  await cancelledOrder.populate('user', 'name email');
+
+  // Send cancellation email
+  try {
+    await sendEmail({
+      email: cancelledOrder.user.email,
+      subject: `Order Cancelled - #${cancelledOrder._id.toString().slice(-8).toUpperCase()}`,
+      html: orderStatusUpdateEmail(cancelledOrder, cancelledOrder.user),
+    });
+    console.log('✅ Order cancellation email sent');
+  } catch (error) {
+    console.error('❌ Order cancellation email failed:', error.message);
+    // Don't throw error - order is already cancelled
+  }
+
   res.json({
     success: true,
     message: 'Order cancelled successfully',
