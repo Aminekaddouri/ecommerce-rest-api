@@ -1,6 +1,8 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./src/config/swagger');
 const connectDB = require('./src/config/db');
 const { notFound, errorHandler } = require('./src/middleware/errorMiddleware');
 
@@ -13,6 +15,16 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Swagger Documentation
+app.use(
+  '/api-docs',
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, {
+    customCss: '.swagger-ui .topbar { display: none }',
+    customSiteTitle: 'E-Commerce API Documentation',
+  })
+);
 
 // Routes
 app.use('/api/auth', require('./src/routes/authRoutes'));
@@ -41,4 +53,5 @@ app.listen(PORT, () => {
   console.log(
     `🚀 Server running in ${process.env.NODE_ENV} mode on port ${PORT}`
   );
+  console.log(`Swagger Docs: http://localhost:${PORT}/api-docs`);
 });
