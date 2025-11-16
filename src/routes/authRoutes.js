@@ -6,12 +6,18 @@ const {
   loginUser,
   getUserProfile,
   updateUserProfile,
+  forgotPassword,
+  resetPassword,
 } = require('../controllers/authController');
 const { protect } = require('../middleware/authMiddleware');
 
 // Public routes
 router.post('/register', registerUser);
 router.post('/login', loginUser);
+
+// Password reset routes (Public)
+router.post('/forgot-password', forgotPassword);
+router.put('/reset-password/:resetToken', resetPassword);
 
 // Protected routes (require authentication)
 router
