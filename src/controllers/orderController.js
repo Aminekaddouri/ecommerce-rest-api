@@ -2,6 +2,11 @@ const asyncHandler = require('express-async-handler');
 const Order = require('../models/Order');
 const Cart = require('../models/Cart');
 const Product = require('../models/Product');
+const sendEmail = require('../utils/sendEmail');
+const {
+  orderConfirmationEmail,
+  orderStatusUpdateEmail,
+} = require('../utils/emailTemplates');
 
 // Create new order from cart
 const createOrder = asyncHandler(async (req, res) => {
@@ -84,6 +89,18 @@ const createOrder = asyncHandler(async (req, res) => {
 
   // Populate user info
   await order.populate('user', 'name email');
+
+  // Send order confirmation email
+  try {
+    await sendEmail({
+      email: order.user.email,
+      subject: `Order Confirmation - #${order._id.toString().slice(-8).toUpperCase()}`,
+      html: orderConfirmationEmail(order, order.user),
+    });
+    console.log('✅ Order confirmation email sent');
+  } catch (error) {
+    console.error('❌ Order confirmation email failed:', error.message);
+  }
 
   res.status(201).json({
     success: true,
@@ -196,6 +213,22 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
   }
 
   const updatedOrder = await order.save();
+
+  // Populate user info for email
+  await updatedOrder.populate('user', 'name email');
+
+  // Send status update email
+  try {
+    await sendEmail({
+      email: updatedOrder.user.email,
+      subject: `Order Status Update - #${updatedOrder._id.toString().slice(-8).toUpperCase()}`,
+      html: orderStatusUpdateEmail(updatedOrder, updatedOrder.user),
+    });
+    console.log('✅ Order status update email sent');
+  } catch (error) {
+    console.error('❌ Order status email failed:', error.message);
+    // Don't throw error - status is updated
+  }
 
   res.json({
     success: true,
