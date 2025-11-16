@@ -1,4 +1,4 @@
-const createTransport = require('../config/email');
+const createTransporter = require('../config/email');
 
 /**
  * Send Email
