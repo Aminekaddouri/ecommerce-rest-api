@@ -21,15 +21,17 @@ A full-featured, production-ready e-commerce REST API built with Node.js, Expres
 - ✅ Advanced Search & Filtering
 - ✅ Price Range Filtering
 - ✅ Category Filtering
-- ✅ Sorting (Price, Date, Name)
+- ✅ Sorting (Price, Date, Name, Rating)
 - ✅ Pagination
+- ✅ Product Reviews & Ratings
+- ✅ Shopping Cart
+- ✅ Order Management
+- ✅ Email Notifications
+- ✅ Password Reset
+- ✅ Interactive API Documentation (Swagger)
 - ✅ Error Handling
 - ✅ MongoDB Integration
 - ✅ ESLint + Prettier (Code Quality)
-- 🚧 Product Reviews & Ratings (Coming Soon)
-- 🚧 Shopping Cart (Coming Soon)
-- 🚧 Order Processing (Coming Soon)
-- 🚧 Payment Integration (Coming Soon)
 
 ---
 
@@ -77,6 +79,16 @@ JWT_EXPIRE=30d
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
+
+# Email (Gmail)
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASSWORD=your_gmail_app_password
+EMAIL_FROM=noreply@yourapp.com
+
+# Frontend URL
+FRONTEND_URL=http://localhost:3000
 ```
 
 5. **Start the server:**
@@ -87,6 +99,12 @@ npm run dev
 # Production mode
 npm start
 ```
+
+6. **Access API Documentation:**
+```
+http://localhost:5000/api-docs
+```
+Interactive Swagger UI with all endpoints, examples, and "Try it out" functionality!
 
 ---
 
@@ -112,6 +130,30 @@ npm run format:check
 
 ---
 
+---
+
+## 📚 API Documentation
+
+**Interactive documentation available at:** `http://localhost:5000/api-docs`
+
+Features:
+- 🧪 **Try It Out** - Test endpoints directly from browser
+- 📖 **Complete Reference** - All endpoints documented
+- 🔐 **Authentication** - JWT bearer token support
+- 📝 **Request/Response Examples** - Clear examples for every endpoint
+- 🏷️ **Organized by Tags** - Easy navigation
+
+### Quick Links:
+- **Authentication:** Register, Login, Password Reset
+- **Products:** CRUD, Search, Filter, Sort
+- **Reviews:** Create, Read, Update, Delete
+- **Cart:** Add, Update, Remove Items
+- **Orders:** Create, Track, Manage
+- **Upload:** Image Management
+
+
+---
+
 ## 📚 API Endpoints
 
 ### Authentication
@@ -120,6 +162,8 @@ npm run format:check
 |--------|----------|-------------|--------|
 | POST | `/api/auth/register` | Register new user | Public |
 | POST | `/api/auth/login` | Login user | Public |
+| POST | `/api/auth/forgot-password` | Request password reset | Public |
+| PUT | `/api/auth/reset-password/:token` | Reset password | Public |
 | GET | `/api/auth/profile` | Get user profile | Private |
 | PUT | `/api/auth/profile` | Update user profile | Private |
 
@@ -133,6 +177,39 @@ npm run format:check
 | PUT | `/api/products/:id` | Update product | Admin |
 | DELETE | `/api/products/:id` | Delete product | Admin |
 
+### Reviews
+
+| Method | Endpoint | Description | Access |
+|--------|----------|-------------|--------|
+| POST | `/api/products/:productId/reviews` | Create product review | Private |
+| GET | `/api/products/:productId/reviews` | Get product reviews | Public |
+| GET | `/api/reviews/:id` | Get single review | Public |
+| GET | `/api/reviews/my-reviews` | Get my reviews | Private |
+| PUT | `/api/reviews/:id` | Update review | Private (Owner) |
+| DELETE | `/api/reviews/:id` | Delete review | Private (Owner/Admin) |
+
+### Shopping Cart
+
+| Method | Endpoint | Description | Access |
+|--------|----------|-------------|--------|
+| GET | `/api/cart` | Get user's cart | Private |
+| POST | `/api/cart` | Add item to cart | Private |
+| PUT | `/api/cart/:itemId` | Update cart item quantity | Private |
+| DELETE | `/api/cart/:itemId` | Remove item from cart | Private |
+| DELETE | `/api/cart` | Clear entire cart | Private |
+
+### Orders
+
+| Method | Endpoint | Description | Access |
+|--------|----------|-------------|--------|
+| POST | `/api/orders` | Create order from cart | Private |
+| GET | `/api/orders/my-orders` | Get user's orders | Private |
+| GET | `/api/orders/:id` | Get single order | Private (Owner/Admin) |
+| GET | `/api/orders` | Get all orders | Admin |
+| PUT | `/api/orders/:id/pay` | Update order to paid | Private (Owner/Admin) |
+| PUT | `/api/orders/:id/status` | Update order status | Admin |
+| PUT | `/api/orders/:id/cancel` | Cancel order | Private (Owner/Admin) |
+
 ### Image Upload
 
 | Method | Endpoint | Description | Access |
@@ -140,6 +217,82 @@ npm run format:check
 | POST | `/api/upload/single` | Upload single image | Admin |
 | POST | `/api/upload/multiple` | Upload multiple images (max 5) | Admin |
 | DELETE | `/api/upload/:public_id` | Delete image | Admin |
+
+---
+
+## 🌟 Key Features
+
+### Authentication & Authorization
+- JWT-based authentication
+- Password hashing with bcrypt
+- Role-based access control (Customer/Admin)
+- Password reset via email with secure tokens
+- Welcome emails for new users
+- Protected routes middleware
+
+### Product Management
+- Complete CRUD operations
+- Multiple image uploads (max 5 per product)
+- Image storage with Cloudinary
+- 12 product categories
+- Stock management
+- Virtual populate for reviews
+
+### Advanced Search & Filtering
+- Keyword search (name and description)
+- Category filtering
+- Price range filtering (min/max)
+- Multiple sort options (price, date, name, rating)
+- Pagination with customizable limits
+- Dynamic query building
+
+### Reviews & Ratings
+- Star ratings (1-5)
+- Text reviews with 500 character limit
+- One review per user per product
+- Automatic rating calculation
+- Review aggregation pipeline
+- Cascade delete on product removal
+
+### Shopping Cart
+- Add/remove items with stock validation
+- Update quantities
+- Auto-calculate totals (subtotal, tax, shipping)
+- Price snapshot (preserves agreed price)
+- Cart persistence per user
+- Duplicate item prevention
+
+### Order Management
+- Create orders from cart
+- Multiple order statuses (Pending → Processing → Shipped → Delivered)
+- Order cancellation with stock restoration
+- Payment tracking
+- Shipping address storage
+- Order history
+
+### Email Notifications
+- Welcome email on registration
+- Order confirmation with details
+- Order status update emails
+- Password reset emails
+- Beautiful HTML templates
+- Dynamic content generation
+
+### API Documentation
+- Interactive Swagger UI
+- Try endpoints directly in browser
+- Complete request/response examples
+- Authentication support
+- Organized by categories
+- Auto-generated from code
+
+### Code Quality
+- ESLint with Airbnb style guide
+- Prettier for consistent formatting
+- Pre-commit hooks
+- Error handling middleware
+- Input validation
+- Clean code architecture
 
 ---
 
@@ -266,7 +419,7 @@ images: [file2.jpg]
 images: [file3.jpg]
 ```
 
-📖 **For more examples, see [API_EXAMPLES.md](API_EXAMPLES.md)**
+<!-- 📖 **For more examples, see [API_EXAMPLES.md](API_EXAMPLES.md)** -->
 
 ---
 
@@ -277,10 +430,15 @@ ecommerce-rest-api/
 ├── src/
 │   ├── config/              # Configuration files
 │   │   ├── db.js           # MongoDB connection
-│   │   └── cloudinary.js   # Cloudinary setup
+│   │   ├── cloudinary.js   # Cloudinary setup
+│   │   ├── email.js        # Email transporter
+│   │   └── swagger.js      # Swagger/OpenAPI config
 │   ├── controllers/         # Route controllers
 │   │   ├── authController.js
 │   │   ├── productController.js
+│   │   ├── reviewController.js
+│   │   ├── cartController.js
+│   │   ├── orderController.js
 │   │   └── uploadController.js
 │   ├── middleware/          # Custom middleware
 │   │   ├── authMiddleware.js
@@ -289,18 +447,26 @@ ecommerce-rest-api/
 │   │   └── multerErrorHandler.js
 │   ├── models/              # Mongoose models
 │   │   ├── User.js
-│   │   └── Product.js
+│   │   ├── Product.js
+│   │   ├── Review.js
+│   │   ├── Cart.js
+│   │   └── Order.js
 │   ├── routes/              # API routes
 │   │   ├── authRoutes.js
 │   │   ├── productRoutes.js
+│   │   ├── reviewRoutes.js
+│   │   ├── cartRoutes.js
+│   │   ├── orderRoutes.js
 │   │   └── uploadRoutes.js
 │   └── utils/               # Utility functions
 │       ├── generateToken.js
+│       ├── sendEmail.js
+│       ├── emailTemplates.js
 │       └── seedAdmin.js
 ├── .env                     # Environment variables
 ├── .env.example             # Environment template
 ├── .gitignore
-├── eslint.config.mjs         # ESLint configuration
+├── .eslintrc.json          # ESLint configuration
 ├── .prettierrc             # Prettier configuration
 ├── server.js               # Entry point
 ├── package.json
@@ -320,6 +486,8 @@ ecommerce-rest-api/
 - **Authentication:** JWT (JSON Web Tokens)
 - **Security:** bcryptjs for password hashing
 - **File Upload:** Multer + Cloudinary
+- **Email Service:** Nodemailer (Gmail SMTP)
+- **API Documentation:** Swagger/OpenAPI 3.0
 - **Validation:** Mongoose schema validation
 - **Code Quality:** ESLint + Prettier (Airbnb style guide)
 
@@ -354,6 +522,12 @@ ecommerce-rest-api/
 | `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name | Yes |
 | `CLOUDINARY_API_KEY` | Cloudinary API key | Yes |
 | `CLOUDINARY_API_SECRET` | Cloudinary API secret | Yes |
+| `EMAIL_HOST` | SMTP host (e.g., smtp.gmail.com) | Yes |
+| `EMAIL_PORT` | SMTP port | No (default: 587) |
+| `EMAIL_USER` | Email username | Yes |
+| `EMAIL_PASSWORD` | Email password/app password | Yes |
+| `EMAIL_FROM` | From email address | Yes |
+| `FRONTEND_URL` | Frontend URL for email links | Yes |
 
 ---
 
@@ -398,27 +572,41 @@ Common HTTP status codes:
 
 ### Completed ✅
 - [x] User authentication & authorization
+- [x] Password reset via email
 - [x] Product CRUD operations
-- [x] Image upload & management
+- [x] Image upload & management (Cloudinary)
 - [x] Advanced search & filtering
-- [x] Pagination
-- [x] Sorting
+- [x] Pagination & sorting
+- [x] Product reviews & ratings
+- [x] Shopping cart management
+- [x] Order management & tracking
+- [x] Email notifications (Welcome, Order confirmation, Status updates)
+- [x] Interactive API documentation (Swagger)
+- [x] Code quality tools (ESLint + Prettier)
 
-### In Progress 🚧
-- [ ] Product reviews & ratings
-- [ ] Shopping cart
-- [ ] Order management
-
-### Planned 📋
-- [ ] Payment integration (Stripe)
-- [ ] Email notifications
-- [ ] Password reset
+### Future Enhancements 📋
+- [ ] Payment integration (Stripe/PayPal)
 - [ ] Refresh tokens
-- [ ] Admin dashboard
+- [ ] Admin dashboard analytics
 - [ ] API rate limiting
 - [ ] Redis caching
 - [ ] Unit & integration tests
-- [ ] API documentation (Swagger)
+- [ ] Wishlist feature
+- [ ] Discount codes & coupons
+- [ ] Product variants (size, color)
+- [ ] Address book
+
+---
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome!
+
+1. Fork the project
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ---
 
@@ -445,6 +633,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript)
 
 ---
+
 
 <div align="center">
 
